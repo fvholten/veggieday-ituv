@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "717211038294",
+    "project_id": "veggieday-ituv",
+    "storage_bucket": "veggieday-ituv.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:717211038294:android:480d60821810aae59401f7",
+        "android_client_info": {
+          "package_name": "com.example.hello_ituv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "717211038294-2iu6p7q8un4f0ku135rvslv4pj4f10uj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaz3v8kh8mUqW_QVChpPi1xtU2QMxrk_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "717211038294-2iu6p7q8un4f0ku135rvslv4pj4f10uj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
