@@ -20,11 +20,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    debugPrint('USER: ${FirebaseAuth.instance.currentUser}');
     return MaterialApp(
       title: 'IT.UV//Veggieday',
       theme: ThemeData(primarySwatch: Colors.blue),
       navigatorObservers: [TransitionRouteObserver()],
-      initialRoute: LoginScreen.routeName,
+      initialRoute: (FirebaseAuth.instance.currentUser != null)
+          ? DashboardScreen.routeName
+          : LoginScreen.routeName,
       routes: {
         LoginScreen.routeName: (context) => const LoginScreen(),
         DashboardScreen.routeName: (context) => const DashboardScreen(),

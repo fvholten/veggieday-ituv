@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_login/flutter_login.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'constants.dart';
@@ -17,7 +15,7 @@ class LoginScreen extends StatelessWidget {
     try {
       return FirebaseAuth.instance
           .signInWithEmailAndPassword(email: data.name, password: data.password)
-          .then((_) => '');
+          .then((_) => '', onError: (error) => error.message);
     } on FirebaseAuthException catch (error) {
       return Future.value(error.message);
     }
@@ -27,13 +25,13 @@ class LoginScreen extends StatelessWidget {
     return FirebaseAuth.instance
         .createUserWithEmailAndPassword(
             email: data.name!, password: data.password!)
-        .then((_) => null);
+        .then((_) => '', onError: (error) => error.message);
   }
 
   Future<String?> _recoverPassword(String name) {
     return FirebaseAuth.instance
         .sendPasswordResetEmail(email: name)
-        .then((_) => null);
+        .then((_) => '', onError: (error) => error.message);
   }
 
   @override
@@ -99,7 +97,6 @@ class LoginScreen extends StatelessWidget {
         return _recoverPassword(name);
         // Show new password dialog
       },
-      showDebugButtons: true,
     );
   }
 }

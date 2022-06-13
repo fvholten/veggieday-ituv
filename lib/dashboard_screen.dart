@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_login/theme.dart';
@@ -7,6 +6,7 @@ import 'transition_route_observer.dart';
 import 'widgets/fade_in.dart';
 import 'constants.dart';
 import 'widgets/round_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DashboardScreen extends StatefulWidget {
   static const routeName = '/dashboard';
@@ -22,8 +22,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   Future<bool> _goToLogin(BuildContext context) {
     return Navigator.of(context)
         .pushReplacementNamed('/auth')
-        // we dont want to pop the screen, just replace it completely
-        .then((_) => false);
+        .then((_) => FirebaseAuth.instance.currentUser != null);
   }
 
   final routeObserver = TransitionRouteObserver<PageRoute?>();
@@ -80,7 +79,6 @@ class _DashboardScreenState extends State<DashboardScreen>
               tag: Constants.logoTag,
               child: Image.asset(
                 'assets/images/ecorp.png',
-                filterQuality: FilterQuality.high,
                 height: 30,
               ),
             ),
@@ -127,53 +125,6 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  Widget _buildHeader(ThemeData theme) {
-    final primaryColor =
-        Colors.primaries.where((c) => c == theme.primaryColor).first;
-    final accentColor =
-        Colors.primaries.where((c) => c == theme.colorScheme.secondary).first;
-    final linearGradient = LinearGradient(colors: [
-      primaryColor.shade800,
-      primaryColor.shade200,
-    ]).createShader(const Rect.fromLTWH(0.0, 0.0, 418.0, 78.0));
-
-    return ScaleTransition(
-      scale: _headerScaleAnimation,
-      child: FadeIn(
-        controller: _loadingController,
-        curve: headerAniInterval,
-        fadeDirection: FadeDirection.bottomToTop,
-        offset: .5,
-        child: Text('????'),
-      ),
-    );
-  }
-
-  Widget _buildVeggiedaySignInsList() {
-    return Text('Hello');
-  }
-
-  Widget _buildDebugButtons() {
-    const textStyle = TextStyle(fontSize: 12, color: Colors.white);
-
-    return Positioned(
-      bottom: 0,
-      right: 0,
-      child: Row(
-        children: <Widget>[
-          MaterialButton(
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            color: Colors.red,
-            onPressed: () => _loadingController!.value == 0
-                ? _loadingController!.forward()
-                : _loadingController!.reverse(),
-            child: const Text('loading', style: textStyle),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -183,46 +134,14 @@ class _DashboardScreenState extends State<DashboardScreen>
       child: SafeArea(
         child: Scaffold(
           appBar: _buildAppBar(theme),
-          body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: theme.primaryColor.withOpacity(.1),
-            child: Stack(
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    const SizedBox(height: 40),
-                    Expanded(
-                      flex: 2,
-                      child: _buildHeader(theme),
-                    ),
-                    Expanded(
-                      flex: 8,
-                      child: ShaderMask(
-                        // blendMode: BlendMode.srcOver,
-                        shaderCallback: (Rect bounds) {
-                          return LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            tileMode: TileMode.clamp,
-                            colors: <Color>[
-                              Colors.deepPurpleAccent.shade100,
-                              Colors.deepPurple.shade100,
-                              Colors.deepPurple.shade100,
-                              Colors.deepPurple.shade100,
-                              // Colors.red,
-                              // Colors.yellow,
-                            ],
-                          ).createShader(bounds);
-                        },
-                        child: _buildVeggiedaySignInsList(),
-                      ),
-                    ),
-                  ],
-                ),
-                if (!kReleaseMode) _buildDebugButtons(),
-              ],
-            ),
+          body: Stack(
+            children: <Widget>[
+              Column(
+                children: const <Widget>[
+                  Center(child: Text('Hello World')),
+                ],
+              )
+            ],
           ),
         ),
       ),
