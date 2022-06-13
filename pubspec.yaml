@@ -1,5 +1,5 @@
-name: hello_ituv
-description: A new Flutter project.
+name: IT.UV_Veggieday
+description: IT.UV//Veggieday Project (BBS)
 
 publish_to: 'none'
 
@@ -15,6 +15,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_auth: ^3.3.19
   firebase_core: ^1.17.1
+  flutter_login: ^3.2.0
+  font_awesome_flutter: ^9.1.0
 
 dev_dependencies:
   flutter_test:
@@ -25,3 +27,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/ecorp.png
