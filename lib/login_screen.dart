@@ -13,12 +13,13 @@ class LoginScreen extends StatelessWidget {
 
   const LoginScreen({Key? key}) : super(key: key);
 
-  Future<UserCredential> _loginUser(LoginData data) {
+  Future<String> _loginUser(LoginData data) {
     try {
-      return FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: data.name, password: data.password);
-    } catch (error) {
-      return Future.error(error.message);
+      return FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: data.name, password: data.password)
+          .then((_) => '');
+    } on FirebaseAuthException catch (error) {
+      return Future.value(error.message);
     }
   }
 
