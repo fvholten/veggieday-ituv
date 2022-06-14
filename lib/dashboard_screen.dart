@@ -59,7 +59,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     final signOutBtn = IconButton(
       icon: const Icon(FontAwesomeIcons.signOutAlt),
       color: theme.colorScheme.secondary,
-      onPressed: () => _goToLogin(context),
+      onPressed: () {
+        FirebaseAuth.instance.signOut().whenComplete(() => _goToLogin(context));
+      },
     );
     final title = Row(
       children: <Widget>[
