@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:717211038294:android:480d60821810aae59401f7",
         "android_client_info": {
-          "package_name": "com.example.hello_ituv"
+          "package_name": "de.ituv.veggieday"
         }
       },
       "oauth_client": [

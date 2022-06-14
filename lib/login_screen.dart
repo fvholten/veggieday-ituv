@@ -12,26 +12,31 @@ class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   Future<String> _loginUser(LoginData data) {
-    try {
-      return FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: data.name, password: data.password)
-          .then((_) => '', onError: (error) => error.message);
-    } on FirebaseAuthException catch (error) {
-      return Future.value(error.message);
-    }
+    return FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: data.name, password: data.password)
+        .then((_) => '', onError: (error) {
+      debugPrint(error.message);
+      return error.message;
+    });
   }
 
   Future<String?> _signupUser(SignupData data) {
     return FirebaseAuth.instance
         .createUserWithEmailAndPassword(
             email: data.name!, password: data.password!)
-        .then((_) => '', onError: (error) => error.message);
+        .then((_) => '', onError: (error) {
+      debugPrint(error.message);
+      return error.message;
+    });
   }
 
   Future<String?> _recoverPassword(String name) {
     return FirebaseAuth.instance
         .sendPasswordResetEmail(email: name)
-        .then((_) => '', onError: (error) => error.message);
+        .then((_) => '', onError: (error) {
+      debugPrint(error.message);
+      return error.message;
+    });
   }
 
   @override

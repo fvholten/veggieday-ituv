@@ -5,7 +5,6 @@ import 'package:flutter_login/widgets.dart';
 import 'transition_route_observer.dart';
 import 'widgets/fade_in.dart';
 import 'constants.dart';
-import 'widgets/round_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -27,7 +26,6 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   final routeObserver = TransitionRouteObserver<PageRoute?>();
   static const headerAniInterval = Interval(.1, .3, curve: Curves.easeOut);
-  late Animation<double> _headerScaleAnimation;
   AnimationController? _loadingController;
 
   @override
@@ -38,12 +36,6 @@ class _DashboardScreenState extends State<DashboardScreen>
       vsync: this,
       duration: const Duration(milliseconds: 1250),
     );
-
-    _headerScaleAnimation =
-        Tween<double>(begin: .6, end: 1).animate(CurvedAnimation(
-      parent: _loadingController!,
-      curve: headerAniInterval,
-    ));
   }
 
   @override
@@ -107,21 +99,6 @@ class _DashboardScreenState extends State<DashboardScreen>
       title: title,
       backgroundColor: theme.primaryColor.withOpacity(.1),
       elevation: 0,
-    );
-  }
-
-  Widget _buildButton(
-      {Widget? icon, String? label, required Interval interval}) {
-    return RoundButton(
-      icon: icon,
-      label: label,
-      loadingController: _loadingController,
-      interval: Interval(
-        interval.begin,
-        interval.end,
-        curve: const ElasticOutCurve(0.42),
-      ),
-      onPressed: () {},
     );
   }
 

@@ -1,4 +1,4 @@
-package com.example.hello_ituv
+package de.ituv.veggieday
 
 import io.flutter.embedding.android.FlutterActivity
 

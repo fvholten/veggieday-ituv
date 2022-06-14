@@ -6,7 +6,9 @@ import 'transition_route_observer.dart';
 import 'login_screen.dart';
 import 'dashboard_screen.dart';
 
-void main() async {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -17,7 +19,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     debugPrint('USER: ${FirebaseAuth.instance.currentUser}');

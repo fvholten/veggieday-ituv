@@ -1,4 +1,4 @@
-# hello_ituv
+# veggieday-ituv
 
 A new Flutter project.
 

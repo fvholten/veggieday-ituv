@@ -1,6 +1,6 @@
 {
-    "name": "hello_ituv",
-    "short_name": "hello_ituv",
+    "name": "veggieday_ituv",
+    "short_name": "veggieday_ituv",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
