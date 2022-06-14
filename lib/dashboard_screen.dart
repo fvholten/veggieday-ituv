@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_login/theme.dart';
 import 'package:flutter_login/widgets.dart';
+import 'signup_screen.dart';
 import 'transition_route_observer.dart';
 import 'widgets/fade_in.dart';
 import 'constants.dart';
@@ -113,8 +114,19 @@ class _DashboardScreenState extends State<DashboardScreen>
           body: Stack(
             children: <Widget>[
               Column(
-                children: const <Widget>[
-                  Center(child: Text('Hello World')),
+                children: <Widget>[
+                  Center(
+                      child: ElevatedButton(
+                    child: const Text('Beim Veggieday anmelden'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SignUpScreen()
+                        ),
+                      );
+                    },
+                  )),
                 ],
               )
             ],
