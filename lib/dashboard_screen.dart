@@ -61,29 +61,26 @@ class _DashboardScreenState extends State<DashboardScreen>
       color: theme.colorScheme.secondary,
       onPressed: () => _goToLogin(context),
     );
-    final title = Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Hero(
-              tag: Constants.logoTag,
-              child: Image.asset(
-                'assets/images/ecorp.png',
-                height: 30,
-              ),
+    final title = Row(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+          child: Hero(
+            tag: Constants.logoTag,
+            child: Image.asset(
+              'assets/images/ecorp.png',
+              height: 30,
             ),
           ),
-          HeroText(
-            Constants.appName,
-            tag: Constants.titleTag,
-            viewState: ViewState.shrunk,
-            style: LoginThemeHelper.loginTextStyle,
-          ),
-          const SizedBox(width: 20),
-        ],
-      ),
+        ),
+        HeroText(
+          Constants.appName,
+          tag: Constants.titleTag,
+          viewState: ViewState.shrunk,
+          style: LoginThemeHelper.loginTextStyle,
+        ),
+        const SizedBox(width: 20),
+      ],
     );
 
     return AppBar(

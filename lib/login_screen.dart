@@ -41,6 +41,14 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (FirebaseAuth.instance.currentUser != null) {
+        Navigator.of(context).pushReplacement(FadePageRoute(
+          builder: (context) => const DashboardScreen(),
+        ));
+      }
+    });
+
     return FlutterLogin(
       title: Constants.appName,
       logo: const AssetImage('assets/images/ecorp.png'),
@@ -52,19 +60,22 @@ class LoginScreen extends StatelessWidget {
         TermOfService(
             id: 'general-term',
             mandatory: true,
-            text: 'Term of services',
+            text: 'Nutzungsbedingungen',
             linkUrl: 'https://example.com'),
       ],
       initialAuthMode: AuthMode.login,
       userValidator: (value) {
         if (!value!.endsWith('@ituv-software.de')) {
-          return "Email must contain '@' and end with '.com'";
+          return "Email muss eine '@ituv-software.de'-Mail sein.";
         }
         return null;
       },
       passwordValidator: (value) {
-        if (value!.isEmpty) {
-          return 'Password is empty';
+        if (value == null || value.isEmpty) {
+          return 'Password ist leer!';
+        }
+        if (value.length < 6) {
+          return 'Password muss mindestens 6 Zeichen haben!';
         }
         return null;
       },
