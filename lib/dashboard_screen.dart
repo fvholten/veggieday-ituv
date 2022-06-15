@@ -115,19 +115,20 @@ class _DashboardScreenState extends State<DashboardScreen>
             children: <Widget>[
               Column(
                 children: <Widget>[
+                  SizedBox(height: 20),
                   Center(
                       child: ElevatedButton(
-                    child: const Text('Beim Veggieday anmelden'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignUpScreen()
-                        ),
-                      );
-                    },
-                  )),
-                ],
+                        style: ElevatedButton.styleFrom(primary: Colors.blue),
+                        child: const Text('Beim Veggieday anmelden'),
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => SignUpScreen()
+                          ),
+                          );
+                        },
+                     )
+                  ),
+                 ],
               )
             ],
           ),
