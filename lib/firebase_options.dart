@@ -67,8 +67,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '717211038294',
     projectId: 'veggieday-ituv',
     storageBucket: 'veggieday-ituv.appspot.com',
-    iosClientId: '717211038294-9038pd21pekiupip3cgfqr2vfpum142v.apps.googleusercontent.com',
-    iosBundleId: 'com.example.helloItuv',
+    iosClientId:
+        '717211038294-9038pd21pekiupip3cgfqr2vfpum142v.apps.googleusercontent.com',
+    iosBundleId: ' de.ituv.veggieday',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -77,7 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '717211038294',
     projectId: 'veggieday-ituv',
     storageBucket: 'veggieday-ituv.appspot.com',
-    iosClientId: '717211038294-9038pd21pekiupip3cgfqr2vfpum142v.apps.googleusercontent.com',
-    iosBundleId: 'com.example.helloItuv',
+    iosClientId:
+        '717211038294-9038pd21pekiupip3cgfqr2vfpum142v.apps.googleusercontent.com',
+    iosBundleId: ' de.ituv.veggieday',
   );
 }

@@ -1,12 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_login/theme.dart';
 import 'package:flutter_login/widgets.dart';
+import 'package:veggieday_ituv/food.dart';
+import 'package:veggieday_ituv/task.dart';
 import 'signup_screen.dart';
 import 'transition_route_observer.dart';
 import 'widgets/fade_in.dart';
 import 'constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:veggieday_ituv/datetime-ext.dart';
 
 class DashboardScreen extends StatefulWidget {
   static const routeName = '/dashboard';
@@ -28,6 +32,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   final routeObserver = TransitionRouteObserver<PageRoute?>();
   static const headerAniInterval = Interval(.1, .3, curve: Curves.easeOut);
   AnimationController? _loadingController;
+
+  final db = FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -106,34 +112,59 @@ class _DashboardScreenState extends State<DashboardScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    DateTime dateOfVeggieDay = DateTime.now().next(DateTime.wednesday);
+
     return WillPopScope(
-      onWillPop: () => _goToLogin(context),
-      child: SafeArea(
-        child: Scaffold(
+        onWillPop: () => _goToLogin(context),
+        child: SafeArea(
+            child: Scaffold(
           appBar: _buildAppBar(theme),
-          body: Stack(
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  SizedBox(height: 20),
-                  Center(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
-                        child: const Text('Beim Veggieday anmelden'),
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => SignUpScreen()
-                          ),
-                          );
-                        },
-                     )
-                  ),
-                 ],
-              )
-            ],
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => VeggiedaySignUpForm()),
+              );
+            },
+            backgroundColor: Colors.blue,
+            child: const Icon(Icons.add),
           ),
-        ),
-      ),
-    );
+          body: StreamBuilder<QuerySnapshot>(
+              stream: db
+                  .collection(Constants.signupCollectionName)
+                  .where('veggieday',
+                      isEqualTo: DateTime(dateOfVeggieDay.year,
+                          dateOfVeggieDay.month, dateOfVeggieDay.day))
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return ListView(
+                    children: snapshot.data!.docs.map((doc) {
+                      String name = doc.get(Constants.nameFieldName);
+                      Task task = Task.values.firstWhere(
+                          (e) => e.value == doc.get(Constants.taskFieldName));
+                      Food food = Food.values.firstWhere(
+                          (e) => e.value == doc.get(Constants.foodFieldName));
+                      return Card(
+                        child: ListTile(
+                          title: Row(
+                            children: [
+                              const Icon(Icons.person),
+                              Text(name),
+                            ],
+                          ),
+                          subtitle: Text(
+                              'Aufgabe: ${task.description}, Essenswahl: ${food.description}'),
+                        ),
+                      );
+                    }).toList(),
+                  );
+                }
+              }),
+        )));
   }
 }

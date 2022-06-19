@@ -1,27 +1,25 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:veggieday_ituv/constants.dart';
+import 'package:veggieday_ituv/food.dart';
+import 'package:veggieday_ituv/task.dart';
+import 'package:veggieday_ituv/datetime-ext.dart';
 
-class SignUpScreen extends StatelessWidget {
-  //const SignUpScreen({super.key});
+class VeggiedaySignUpForm extends StatefulWidget {
+  @override
+  _VeggiedaySignUpFormState createState() => _VeggiedaySignUpFormState();
+}
 
+class _VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
   final _formKey = GlobalKey<FormState>();
 
-  final List<String> aufgabenList = [
-  'Schnibbeln',
-  'Aufräumen',
-  'Einkaufen',
-  'Grillen',
-  ];
+  final db = FirebaseFirestore.instance;
 
-  String? selectedValueTask;
-
-  final List<String> veggieList = [
-  'Veggie',
-  'Fleisch',
-  'Wurst',
-  'Fleisch und Wurst',
-  ];
-
-  String? selectedValueVeggie;
+  TextEditingController nameEditingController = TextEditingController();
+  Task? selectedTask;
+  Food? selectedFood;
 
   @override
   Widget build(BuildContext context) {
@@ -33,113 +31,127 @@ class SignUpScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
           child: Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.all(50),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  // Enter your name here
-                  SizedBox(height: 20),
-                  TextFormField(
-                    keyboardType: TextInputType.text,
-                    autocorrect: false,
-                    decoration: const InputDecoration(
-                      labelText: 'Name',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (text){
-                      print(text);
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Bitte deinen Namen eingeben';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  // veggie or meat
-                  DropdownButtonFormField(
-                    items: veggieList.map((item) =>
-                      DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(
-                          item,
-                          style: const TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      )
-                    )
-                    .toList(),
-                    decoration: const InputDecoration(
-                      labelText: 'Veggie oder Fleisch?',
-                      border: OutlineInputBorder(),
-                    ),
-                    value: selectedValueTask,
-                    onChanged: (value) {
-                      print(value);
-                      // setState(() {
-                      //   selectedValue = value as String;
-                      // });
-                    },),
-                  SizedBox(height: 20),
-                  // task
-                  DropdownButtonFormField(
-                    items: aufgabenList.map((item) =>
-                      DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(
-                          item,
-                          style: const TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      )
-                    )
-                    .toList(),
-                    decoration: const InputDecoration(
-                      labelText: 'Aufgabe',
-                      border: OutlineInputBorder(),
-                    ),
-                    value: selectedValueVeggie,
-                    onChanged: (value) {
-                      print(value);
-                      // setState(() {
-                      //   selectedValue = value as String;
-                      // });
-                    },),
-                  SizedBox(height: 20),
-                  //Zurück Button
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              key: _formKey,
+              child: Padding(
+                  padding: const EdgeInsets.all(50),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      ElevatedButton(
-                        child: const Icon(Icons.arrow_back),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          // Navigate back to first route when tapped.
+                      // Enter your name here
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        controller: nameEditingController,
+                        keyboardType: TextInputType.text,
+                        autocorrect: false,
+                        autofillHints: const {AutofillHints.name},
+                        decoration: const InputDecoration(
+                          labelText: 'Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Bitte deinen Namen eingeben';
+                          }
+                          return null;
                         },
-                        // child: const Text('Zurück!'),
                       ),
-                      SizedBox(width: 20),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(primary: Colors.blue),
-                        onPressed: () {
-                          //TODO animation sign up successfull
-
-                        },
-                        child: const Text('Anmelden!'),
+                      const SizedBox(height: 20),
+                      DropdownButtonFormField(
+                        items: Food.values
+                            .map((item) => DropdownMenuItem<Food>(
+                                  value: item,
+                                  child: Text(
+                                    item.description,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ))
+                            .toList(),
+                        decoration: const InputDecoration(
+                          labelText: 'Veggie oder Fleisch?',
+                          border: OutlineInputBorder(),
+                        ),
+                        value: selectedTask,
+                        onChanged: (Enum? value) =>
+                            selectedFood = value as Food,
+                      ),
+                      const SizedBox(height: 20),
+                      // task
+                      DropdownButtonFormField(
+                        items: Task.values
+                            .map((item) => DropdownMenuItem<Task>(
+                                  value: item,
+                                  child: Text(
+                                    item.description,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ))
+                            .toList(),
+                        decoration: const InputDecoration(
+                          labelText: 'Aufgabe',
+                          border: OutlineInputBorder(),
+                        ),
+                        value: selectedFood,
+                        onChanged: (Enum? value) =>
+                            selectedTask = value as Task,
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton(
+                            style:
+                                ElevatedButton.styleFrom(primary: Colors.blue),
+                            onPressed: () => Navigator.pop(context),
+                            child: const Icon(Icons.arrow_back),
+                          ),
+                          const SizedBox(width: 20),
+                          ElevatedButton(
+                            style:
+                                ElevatedButton.styleFrom(primary: Colors.blue),
+                            onPressed: () {
+                              debugPrint(
+                                  'NAME:${nameEditingController.text} FOOD:$selectedFood TASK:$selectedTask');
+                              if (_formKey.currentState?.validate() ?? false) {
+                                debugPrint('Form Valid!');
+                                String userEMail =
+                                    FirebaseAuth.instance.currentUser!.email!;
+                                DateTime dateOfVeggieDay =
+                                    DateTime.now().next(DateTime.wednesday);
+                                String veggiedayDate = DateFormat('yyyy_MM_dd')
+                                    .format(dateOfVeggieDay);
+                                debugPrint(veggiedayDate);
+                                db
+                                    .collection(Constants.signupCollectionName)
+                                    .doc('$veggiedayDate-$userEMail')
+                                    .set({
+                                      Constants.nameFieldName:
+                                          nameEditingController.text,
+                                      'uid': FirebaseAuth
+                                          .instance.currentUser?.uid,
+                                      Constants.veggiedayFieldName: DateTime(
+                                          dateOfVeggieDay.year,
+                                          dateOfVeggieDay.month,
+                                          dateOfVeggieDay.day),
+                                      Constants.foodFieldName:
+                                          selectedFood!.value,
+                                      Constants.taskFieldName:
+                                          selectedTask!.value
+                                    }, SetOptions(merge: true))
+                                    .onError((e, _) => debugPrint(
+                                        "Error writing document: $e"))
+                                    .then((value) => Navigator.pop(context));
+                              }
+                            },
+                            child: const Text('Anmelden!'),
+                          ),
+                        ],
                       ),
                     ],
-                  ),
-                ],
-              )
-            )
-          )
-        ),
+                  )))),
     );
   }
 }
