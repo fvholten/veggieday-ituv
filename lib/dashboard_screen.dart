@@ -5,6 +5,7 @@ import 'package:flutter_login/theme.dart';
 import 'package:flutter_login/widgets.dart';
 import 'package:veggieday_ituv/food.dart';
 import 'package:veggieday_ituv/task.dart';
+import 'package:veggieday_ituv/veggieday_signup.dart';
 import 'signup_screen.dart';
 import 'transition_route_observer.dart';
 import 'widgets/fade_in.dart';
@@ -33,6 +34,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   static const headerAniInterval = Interval(.1, .3, curve: Curves.easeOut);
   AnimationController? _loadingController;
 
+  final currentUser = FirebaseAuth.instance.currentUser;
   final db = FirebaseFirestore.instance;
 
   @override
@@ -123,7 +125,9 @@ class _DashboardScreenState extends State<DashboardScreen>
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => VeggiedaySignUpForm()),
+                MaterialPageRoute(
+                    builder: (context) =>
+                        VeggiedaySignUpForm(signup: VeggiedaySignUp())),
               );
             },
             backgroundColor: Colors.blue,
@@ -132,9 +136,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           body: StreamBuilder<QuerySnapshot>(
               stream: db
                   .collection(Constants.signupCollectionName)
-                  .where('veggieday',
-                      isEqualTo: DateTime(dateOfVeggieDay.year,
-                          dateOfVeggieDay.month, dateOfVeggieDay.day))
+                  .where('veggieday', isGreaterThan: DateTime.now())
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
@@ -144,23 +146,46 @@ class _DashboardScreenState extends State<DashboardScreen>
                 } else {
                   return ListView(
                     children: snapshot.data!.docs.map((doc) {
-                      String name = doc.get(Constants.nameFieldName);
-                      Task task = Task.values.firstWhere(
+                      VeggiedaySignUp signup = VeggiedaySignUp();
+
+                      signup.name = doc.get(Constants.nameFieldName);
+                      String uid = doc.get('uid');
+                      signup.task = Task.values.firstWhere(
                           (e) => e.value == doc.get(Constants.taskFieldName));
-                      Food food = Food.values.firstWhere(
+                      signup.food = Food.values.firstWhere(
                           (e) => e.value == doc.get(Constants.foodFieldName));
                       return Card(
-                        child: ListTile(
-                          title: Row(
-                            children: [
-                              const Icon(Icons.person),
-                              Text(name),
-                            ],
-                          ),
-                          subtitle: Text(
-                              'Aufgabe: ${task.description}, Essenswahl: ${food.description}'),
-                        ),
-                      );
+                          child: ListTile(
+                              title: Row(
+                                children: [
+                                  const Icon(Icons.person),
+                                  Text(signup.name ?? ''),
+                                ],
+                              ),
+                              subtitle: Text(
+                                  'Aufgabe: ${signup.task!.description}, Essenswahl: ${signup.food!.description}'),
+                              onTap: () {
+                                if (uid == currentUser?.uid) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            VeggiedaySignUpForm(
+                                              signup: signup,
+                                            )),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: const Text(
+                                        'Du kannst nur deinen Eintrag verändern!'),
+                                    action: SnackBarAction(
+                                      label: 'Okay',
+                                      onPressed: () {},
+                                    ),
+                                  ));
+                                }
+                              }));
                     }).toList(),
                   );
                 }

@@ -6,8 +6,13 @@ import 'package:veggieday_ituv/constants.dart';
 import 'package:veggieday_ituv/food.dart';
 import 'package:veggieday_ituv/task.dart';
 import 'package:veggieday_ituv/datetime-ext.dart';
+import 'package:veggieday_ituv/veggieday_signup.dart';
 
 class VeggiedaySignUpForm extends StatefulWidget {
+  const VeggiedaySignUpForm({super.key, required this.signup});
+
+  final VeggiedaySignUp signup;
+
   @override
   _VeggiedaySignUpFormState createState() => _VeggiedaySignUpFormState();
 }
@@ -18,11 +23,10 @@ class _VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
   final db = FirebaseFirestore.instance;
 
   TextEditingController nameEditingController = TextEditingController();
-  Task? selectedTask;
-  Food? selectedFood;
 
   @override
   Widget build(BuildContext context) {
+    nameEditingController.text = widget.signup.name ?? '';
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
@@ -72,9 +76,9 @@ class _VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
                           labelText: 'Veggie oder Fleisch?',
                           border: OutlineInputBorder(),
                         ),
-                        value: selectedTask,
+                        value: widget.signup.food,
                         onChanged: (Enum? value) =>
-                            selectedFood = value as Food,
+                            widget.signup.food = value as Food,
                       ),
                       const SizedBox(height: 20),
                       // task
@@ -94,9 +98,9 @@ class _VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
                           labelText: 'Aufgabe',
                           border: OutlineInputBorder(),
                         ),
-                        value: selectedFood,
+                        value: widget.signup.task,
                         onChanged: (Enum? value) =>
-                            selectedTask = value as Task,
+                            widget.signup.task = value as Task,
                       ),
                       const SizedBox(height: 20),
                       Row(
@@ -114,7 +118,7 @@ class _VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
                                 ElevatedButton.styleFrom(primary: Colors.blue),
                             onPressed: () {
                               debugPrint(
-                                  'NAME:${nameEditingController.text} FOOD:$selectedFood TASK:$selectedTask');
+                                  'NAME:${nameEditingController.text} FOOD:${widget.signup.food} TASK:${widget.signup.task}');
                               if (_formKey.currentState?.validate() ?? false) {
                                 debugPrint('Form Valid!');
                                 String userEMail =
@@ -123,7 +127,13 @@ class _VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
                                     DateTime.now().next(DateTime.wednesday);
                                 String veggiedayDate = DateFormat('yyyy_MM_dd')
                                     .format(dateOfVeggieDay);
-                                debugPrint(veggiedayDate);
+
+                                DateTime plainDateOfVeggieday = DateTime(
+                                    dateOfVeggieDay.year,
+                                    dateOfVeggieDay.month,
+                                    dateOfVeggieDay.day);
+                                debugPrint(plainDateOfVeggieday.toString());
+
                                 db
                                     .collection(Constants.signupCollectionName)
                                     .doc('$veggiedayDate-$userEMail')
@@ -132,14 +142,12 @@ class _VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
                                           nameEditingController.text,
                                       'uid': FirebaseAuth
                                           .instance.currentUser?.uid,
-                                      Constants.veggiedayFieldName: DateTime(
-                                          dateOfVeggieDay.year,
-                                          dateOfVeggieDay.month,
-                                          dateOfVeggieDay.day),
+                                      Constants.veggiedayFieldName:
+                                          plainDateOfVeggieday,
                                       Constants.foodFieldName:
-                                          selectedFood!.value,
+                                          widget.signup.food!.value,
                                       Constants.taskFieldName:
-                                          selectedTask!.value
+                                          widget.signup.task!.value
                                     }, SetOptions(merge: true))
                                     .onError((e, _) => debugPrint(
                                         "Error writing document: $e"))
