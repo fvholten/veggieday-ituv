@@ -24,40 +24,39 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'IT.UV//Veggieday',
       theme: ThemeData(
-        textSelectionTheme:
-            const TextSelectionThemeData(cursorColor: Colors.black),
-        // fontFamily: 'SourceSansPro',
-        textTheme: TextTheme(
-          headline3: const TextStyle(
-            fontFamily: 'OpenSans',
-            fontSize: 45.0,
-            fontWeight: FontWeight.w400,
-            color: Colors.black,
+          textSelectionTheme:
+              const TextSelectionThemeData(cursorColor: Colors.black),
+          // fontFamily: 'SourceSansPro',
+          textTheme: TextTheme(
+            headline3: TextStyle(
+              fontFamily: 'OpenSans',
+              fontSize: 60.0,
+              fontWeight: FontWeight.w400,
+              color: Colors.blue[900],
+            ),
+            button: const TextStyle(
+              // OpenSans is similar to NotoSans but the uppercases look a bit better IMO
+              fontFamily: 'OpenSans',
+            ),
+            caption: TextStyle(
+              fontFamily: 'NotoSans',
+              fontSize: 12.0,
+              fontWeight: FontWeight.normal,
+              color: Colors.blue[300],
+            ),
+            headline1: const TextStyle(fontFamily: 'Quicksand'),
+            headline2: const TextStyle(fontFamily: 'Quicksand'),
+            headline4: const TextStyle(fontFamily: 'Quicksand'),
+            headline5: const TextStyle(fontFamily: 'NotoSans'),
+            headline6: const TextStyle(fontFamily: 'NotoSans'),
+            subtitle1: const TextStyle(fontFamily: 'NotoSans'),
+            bodyText1: const TextStyle(fontFamily: 'NotoSans'),
+            bodyText2: const TextStyle(fontFamily: 'NotoSans'),
+            subtitle2: const TextStyle(fontFamily: 'NotoSans'),
+            overline: const TextStyle(fontFamily: 'NotoSans'),
           ),
-          button: const TextStyle(
-            // OpenSans is similar to NotoSans but the uppercases look a bit better IMO
-            fontFamily: 'OpenSans',
-          ),
-          caption: TextStyle(
-            fontFamily: 'NotoSans',
-            fontSize: 12.0,
-            fontWeight: FontWeight.normal,
-            color: Colors.deepPurple[300],
-          ),
-          headline1: const TextStyle(fontFamily: 'Quicksand'),
-          headline2: const TextStyle(fontFamily: 'Quicksand'),
-          headline4: const TextStyle(fontFamily: 'Quicksand'),
-          headline5: const TextStyle(fontFamily: 'NotoSans'),
-          headline6: const TextStyle(fontFamily: 'NotoSans'),
-          subtitle1: const TextStyle(fontFamily: 'NotoSans'),
-          bodyText1: const TextStyle(fontFamily: 'NotoSans'),
-          bodyText2: const TextStyle(fontFamily: 'NotoSans'),
-          subtitle2: const TextStyle(fontFamily: 'NotoSans'),
-          overline: const TextStyle(fontFamily: 'NotoSans'),
-        ),
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple)
-            .copyWith(secondary: Colors.black),
-      ),
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
+              .copyWith(secondary: Colors.blueGrey)),
       navigatorObservers: [TransitionRouteObserver()],
       initialRoute: LoginScreen.routeName,
       routes: {
