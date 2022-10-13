@@ -30,9 +30,9 @@ class LoginScreen extends StatelessWidget {
     });
   }
 
-  Future<String?> _recoverPassword(String name) {
+  Future<String?> _recoverPassword(String email) {
     return FirebaseAuth.instance
-        .sendPasswordResetEmail(email: name)
+        .sendPasswordResetEmail(email: email)
         .then((_) => '', onError: (error) {
       debugPrint(error.message);
       return error.message;
@@ -55,14 +55,7 @@ class LoginScreen extends StatelessWidget {
       logoTag: Constants.logoTag,
       titleTag: Constants.titleTag,
       navigateBackAfterRecovery: true,
-      loginAfterSignUp: true,
-      termsOfService: [
-        TermOfService(
-            id: 'general-term',
-            mandatory: true,
-            text: 'Nutzungsbedingungen',
-            linkUrl: 'https://example.com'),
-      ],
+      loginAfterSignUp: false,
       initialAuthMode: AuthMode.login,
       userValidator: (value) {
         if (!value!.endsWith('@ituv-software.de')) {
