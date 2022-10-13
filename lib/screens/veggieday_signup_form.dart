@@ -5,8 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:veggieday_ituv/constants.dart';
 import 'package:veggieday_ituv/domain/food.dart';
 import 'package:veggieday_ituv/domain/task.dart';
-import 'package:veggieday_ituv/datetime-ext.dart';
+import 'package:veggieday_ituv/utils/datetime-ext.dart';
 import 'package:veggieday_ituv/domain/veggieday_signup.dart';
+
+import '../widgets/veggieday_appbar.dart';
 
 class VeggiedaySignUpForm extends StatefulWidget {
   const VeggiedaySignUpForm(
@@ -35,9 +37,10 @@ class VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
     nameEditingController.text = widget.signup.name ?? '';
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: theme.primaryColor.withOpacity(.1),
-        title: const Text('Anmeldung zum Veggieday'),
+      appBar: const VeggiedayAppBar(
+        title: 'Anmeldung zum Veggieday',
+        key: Key('VeggiedaySignUp-Appbar'),
+        showLogo: false,
       ),
       body: SingleChildScrollView(
           child: Form(
@@ -55,7 +58,15 @@ class VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
                       if (widget.signup.isSingedUp) {
                         return updateSignupButtons(context);
                       } else {
-                        return newSignupButtons(context);
+                        return ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                              minimumSize: const Size.fromHeight(50)),
+                          icon: const Icon(Icons.celebration),
+                          label: const Text('Anmelden!'),
+                          onPressed: Constants.signupOpen()
+                              ? () => doSignup(context)
+                              : null,
+                        );
                       }
                     }),
                   ],
@@ -77,7 +88,14 @@ class VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
         border: OutlineInputBorder(),
       ),
       value: widget.signup.task,
-      onChanged: (value) => widget.signup.task = value as Task,
+      onChanged:
+          Constants.signupOpen() ? (value) => widget.signup.task = value : null,
+      validator: (value) {
+        if (value == null) {
+          return 'Ohne Schweiß kein Preis!';
+        }
+        return null;
+      },
     );
   }
 
@@ -88,7 +106,8 @@ class VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
         border: OutlineInputBorder(),
       ),
       value: widget.signup.food,
-      onChanged: (value) => widget.signup.food = value as Food,
+      onChanged:
+          Constants.signupOpen() ? (value) => widget.signup.food = value : null,
       selectedItemBuilder: (context) {
         return widget.foods.map<Widget>((item) {
           return Container(
@@ -97,6 +116,12 @@ class VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
             child: Text(item.name),
           );
         }).toList();
+      },
+      validator: (value) {
+        if (value == null) {
+          return 'Willst du nichts Essen?!';
+        }
+        return null;
       },
       items: widget.foods
           .map((item) => DropdownMenuItem<Food>(
@@ -107,42 +132,53 @@ class VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
     );
   }
 
-  Row updateSignupButtons(BuildContext context) {
-    return Row(
+  Column updateSignupButtons(BuildContext context) {
+    return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-          onPressed: () => Navigator.pop(context),
-          child: const Icon(Icons.arrow_back),
+        ElevatedButton.icon(
+          icon: const Icon(Icons.refresh),
+          label: const Text('Eintrag aktualisieren'),
+          style:
+              ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50)),
+          onPressed: Constants.signupOpen() ? () => doSignup(context) : null,
         ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-          onPressed: () => deleteSignup(context),
-          child: const Text('Löschen'),
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-          onPressed: () => doSignup(context),
-          child: const Text('Aktualisieren'),
-        ),
-      ],
-    );
-  }
-
-  Row newSignupButtons(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-          onPressed: () => Navigator.pop(context),
-          child: const Icon(Icons.arrow_back),
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-          onPressed: () => doSignup(context),
-          child: const Text('Anmelden!'),
+        const SizedBox(height: 8),
+        TextButton.icon(
+          icon: const Icon(Icons.delete),
+          label: const Text('Anmeldung löschen'),
+          style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+              foregroundColor: Colors.red),
+          onPressed: Constants.signupOpen()
+              ? () {
+                  AlertDialog alert = AlertDialog(
+                    title: const Text("Löschen bestätigen!"),
+                    content: const Text("Willst du doch nicht dabei sein?"),
+                    actions: [
+                      TextButton(
+                        child: const Text("Nay"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: const Text("Yay"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          deleteSignup(context);
+                        },
+                      )
+                    ],
+                  );
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return alert;
+                    },
+                  );
+                }
+              : null,
         ),
       ],
     );
@@ -158,7 +194,7 @@ class VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
       String veggiedayDate = DateFormat('yyyy_MM_dd').format(dateOfVeggieDay);
 
       DateTime plainDateOfVeggieday = DateTime(
-          dateOfVeggieDay.year, dateOfVeggieDay.month, dateOfVeggieDay.day);
+          dateOfVeggieDay.year, dateOfVeggieDay.month, dateOfVeggieDay.day, 12);
       debugPrint(plainDateOfVeggieday.toString());
 
       db
@@ -200,6 +236,7 @@ class VeggiedaySignUpFormState extends State<VeggiedaySignUpForm> {
       controller: nameEditingController,
       keyboardType: TextInputType.text,
       autocorrect: false,
+      enabled: Constants.signupOpen(),
       autofillHints: const {AutofillHints.name},
       decoration: const InputDecoration(
         labelText: 'Dein Name',

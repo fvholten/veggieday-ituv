@@ -31,4 +31,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/ecorp.png
+    - assets/images/ituvshort.png
+    - assets/images/ituvlong.png

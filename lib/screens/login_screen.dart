@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'constants.dart';
-import 'custom_route.dart';
-import 'dashboard_screen.dart';
+import '../constants.dart';
 
 class LoginScreen extends StatelessWidget {
-  static const routeName = '/auth';
-
   const LoginScreen({Key? key}) : super(key: key);
 
   Future<String> _loginUser(LoginData data) {
@@ -41,21 +37,13 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (FirebaseAuth.instance.currentUser != null) {
-        Navigator.of(context).pushReplacement(FadePageRoute(
-          builder: (context) => const DashboardScreen(),
-        ));
-      }
-    });
-
     return FlutterLogin(
       title: Constants.appName,
-      logo: const AssetImage('assets/images/ecorp.png'),
+      logo: const AssetImage('assets/images/ituvlong.png'),
       logoTag: Constants.logoTag,
       titleTag: Constants.titleTag,
       navigateBackAfterRecovery: true,
-      loginAfterSignUp: false,
+      loginAfterSignUp: true,
       initialAuthMode: AuthMode.login,
       userValidator: (value) {
         if (!value!.endsWith('@ituv-software.de')) {
@@ -86,19 +74,7 @@ class LoginScreen extends StatelessWidget {
         signupData.additionalSignupData?.forEach((key, value) {
           debugPrint('$key: $value');
         });
-        if (signupData.termsOfService.isNotEmpty) {
-          debugPrint('Terms of service: ');
-          for (var element in signupData.termsOfService) {
-            debugPrint(
-                ' - ${element.term.id}: ${element.accepted == true ? 'accepted' : 'rejected'}');
-          }
-        }
         return _signupUser(signupData);
-      },
-      onSubmitAnimationCompleted: () {
-        Navigator.of(context).pushReplacement(FadePageRoute(
-          builder: (context) => const DashboardScreen(),
-        ));
       },
       onRecoverPassword: (name) {
         debugPrint('Recover password info');
